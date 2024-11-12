@@ -1,0 +1,33 @@
+#Write a pyspark program to count the no. of words in a txt file from a local system.
+from pyspark import SparkContext, SparkConf
+
+# Configure Spark
+conf = SparkConf().setAppName("WordCount").setMaster("local")
+sc = SparkContext(conf=conf)
+
+# Install docx2txt if needed
+!pip install docx2txt
+
+# Import docx2txt to extract text from Word document
+import docx2txt
+
+# Extract text from Word file
+text = docx2txt.process('/content/BDA lec 2.docx')
+
+# Create an RDD from the extracted text
+text_rdd = sc.parallelize([text])  # Create RDD from single text string
+
+# Perform word count
+word_counts = (
+    text_rdd
+    .flatMap(lambda line: line.split())  # Split each line into words
+    .map(lambda word: (word, 1))  # Map each word to (word, 1)
+    .reduceByKey(lambda a, b: a + b)  # Reduce by key to count occurrences
+)
+
+# Collect the word counts and print (or process further)
+for word, count in word_counts.collect():
+  print(f"{word}: {count}")
+
+# Stop the Spark context
+sc.stop()
