@@ -1,2 +1,3 @@
 all the projects here are created using Apache Spark 
 If you are using a .docx document, convert it into a .txt file to process it 
+for the video analysis using spark project i have used a sample mp4 video 
